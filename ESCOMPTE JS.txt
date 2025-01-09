@@ -1,0 +1,85 @@
+const effects = [];
+document.getElementById("effect-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const valeurNominale = parseFloat(document.getElementById("valeur-nominale").value);
+    const dateNegociation = document.getElementById("date-negociation").value;
+    const echeance = document.getElementById("echeance").value;
+    const tauxEscompte = parseFloat(document.getElementById("taux-escompte").value) / 100;
+    const tva = parseFloat(document.getElementById("tva").value);
+    const domiciliation = document.getElementById("domiciliation").value; // Prend "Oui" ou "Non"
+    const lieu = document.getElementById("lieu").value; // Prend "Oui" ou "Non"
+    const commissionOuiOui = parseFloat(document.getElementById("commission-oui-oui").value);
+    const commissionNonOui = parseFloat(document.getElementById("commission-non-oui").value);
+    const commissionOuiNon = parseFloat(document.getElementById("commission-oui-non").value);
+    const commissionNonNon = parseFloat(document.getElementById("commission-non-non").value);
+    if (isNaN(valeurNominale) || isNaN(tauxEscompte) || isNaN(tva)) {
+        alert("Veuillez entrer des valeurs valides.");
+        return;
+    }
+    const dateEcheance = new Date(echeance);
+    const dateNegoc = new Date(dateNegociation);
+    if (dateEcheance <= dateNegoc) {
+        alert("La date d'échéance doit être postérieure à la date de négociation.");
+        return;
+    }
+    const jours = Math.floor((dateEcheance - dateNegoc) / (1000 * 60 * 60 * 24));
+    const escompte = valeurNominale * tauxEscompte * (jours / 365);
+    let commission;
+    if (domiciliation === "Oui" && lieu === "Oui") {
+        commission = commissionOuiOui;
+    } else if (domiciliation === "Non" && lieu === "Oui") {
+        commission = commissionNonOui;
+    } else if (domiciliation === "Oui" && lieu === "Non") {
+        commission = commissionOuiNon;
+    } else {
+        commission = commissionNonNon;
+    }
+    const commissionTotal = commission + (commission * tva / 100);
+    const netRecu = valeurNominale - escompte - commissionTotal;
+    effects.push({
+        valeurNominale,
+        echeance,
+        domiciliation,
+        lieu,
+        jours,
+        escompte,
+        commissionTotal,
+        netRecu,
+    });
+    renderTable();
+});
+function renderTable() {
+    const tbody = document.querySelector("#result-table tbody");
+    tbody.innerHTML = "";
+    let totalNet = 0;
+    let totalNominal = 0;
+    let totalWeightedDays = 0;
+    let totalEscompte = 0;
+    effects.forEach((effect, index) => {
+        const { valeurNominale, echeance, domiciliation, lieu, jours, escompte, commissionTotal, netRecu } = effect;
+        totalNet += netRecu;
+        totalNominal += valeurNominale;
+        totalEscompte += escompte;
+        totalWeightedDays += valeurNominale * jours;
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${valeurNominale.toFixed(2)}</td>
+                <td>${echeance}</td>
+                <td>${domiciliation}</td>
+                <td>${lieu}</td>
+                <td>${escompte.toFixed(2)}</td>
+                <td>${commissionTotal.toFixed(2)}</td>
+                <td>${netRecu.toFixed(2)}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+    const joursMoyen = totalNominal > 0 ? totalWeightedDays / totalNominal : 0;
+    const tauxRevient = totalEscompte > 0
+        ? ((totalNet - totalEscompte) * joursMoyen) / (totalEscompte * 365)
+        : 0;
+    document.getElementById("total-net").textContent = `${totalNet.toFixed(2)} DT`;
+    document.getElementById("taux-revient").textContent = `${tauxRevient.toFixed(2)} %`;
+    document.getElementById("jours-moyen").textContent = `${joursMoyen.toFixed(2)} jours`;
+}

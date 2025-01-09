@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Effets</title>
+    <link rel="stylesheet" href="escompte.css">
+</head>
+<body>
+    <form id="effect-form">
+        <label for="valeur-nominale">Valeur Nominale (DT) :</label>
+        <input type="number" id="valeur-nominale" name="valeur-nominale" required>
+        <label for="date-negociation">Date de Négociation :</label>
+        <input type="date" id="date-negociation" name="date-negociation" required>
+        <label for="echeance">Date d'Échéance :</label>
+        <input type="date" id="echeance" name="echeance" required>
+        <label for="taux-escompte">Taux d'Escompte (%) :</label>
+        <input type="number" id="taux-escompte" name="taux-escompte" required>
+        <label for="tva">TVA (%) :</label>
+        <input type="number" id="tva" name="tva" required>
+        <label for="domiciliation">Domiciliation :</label>
+        <select id="domiciliation" name="domiciliation" required>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+        </select>
+        <label for="lieu">Lieu :</label>
+        <select id="lieu" name="lieu" required>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+        </select>
+        <label for="commission-oui-oui">Commission "Oui-Oui" :</label>
+        <input type="number" id="commission-oui-oui" name="commission-oui-oui" required>
+        <label for="commission-non-oui">Commission "Non-Oui" :</label>
+        <input type="number" id="commission-non-oui" name="commission-non-oui" required>
+        <label for="commission-oui-non">Commission "Oui-Non" :</label>
+        <input type="number" id="commission-oui-non" name="commission-oui-non" required>
+        <label for="commission-non-non">Commission "Non-Non" :</label>
+        <input type="number" id="commission-non-non" name="commission-non-non" required>
+        <button type="submit">Ajouter l'Effet</button>
+    </form>
+    <table id="result-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Valeur Nominale</th>
+                <th>Date d'Échéance</th>
+                <th>Domiciliation</th>
+                <th>Lieu</th>
+                <th>Escompte</th>
+                <th>Commission+TVA</th>
+                <th>Net Reçu</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="stats">
+        <p>Total Net Reçu : <span id="total-net"></span></p>
+        <p>Taux de Revient : <span id="taux-revient"></span></p>
+        <p>Jours Moyen Pondéré : <span id="jours-moyen"></span></p>
+    </div>
+    <script src="bord.js"></script>
+</body>
+</html>
